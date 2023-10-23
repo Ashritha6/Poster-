@@ -1,24 +1,17 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Poster Analysis</title>
+    <title>Poster Evaluation</title>
 </head>
 <body>
-    <h1>Poster Analysis</h1>
+    <h1>Poster Evaluation</h1>
     <form method="POST" enctype="multipart/form-data">
-        <input type="file" name="poster" accept="image/*" required>
-        <button type="submit">Analyze Poster</button>
+        <label for="posterImage">Upload Poster Image:</label>
+        <input type="file" name="poster" id="posterImage" accept="image/*"required>
+        <br>
+        <label for="evaluation">Evaluation:</label>
+        <br>
+        <button type="submit">Submit Poster</button>
     </form>
-    {% if show_results %}
-    <h2>Analysis Results:</h2>
-    <p>Average RGB: {{ average_rgb_result }}</p>
-    <p>Indentation Evaluation: {{ indentation_result }}</p>
-    <p>Image Clarity Score: {{ clarity_result }}</p>
-    <p>Poster Size: {{ size_dimension_result }}</p>
-    <p>Clutter Score: {{ clutter_result }}</p>
-    <p>Extracted Text: {{ extracted_text }}</p>
-    <p>Barcode Results: {{ barcode_results }}</p>
-    <img src="{{ poster_path }}" alt="Uploaded Poster">
-    {% endif %}
 </body>
 </html>

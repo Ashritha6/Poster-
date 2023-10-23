@@ -9,6 +9,8 @@ from cv2 import cvtColor, Laplacian, COLOR_BGR2GRAY,Canny
 import pytesseract 
 from io import BytesIO
 from fontTools.ttLib import TTFont
+import re
+import requests
 
 app = Flask(__name__)
 
@@ -66,6 +68,14 @@ def extract_text_from_image(image_path):
     text = pytesseract.image_to_string(img)
     return text
 
+# Function to validate a URL
+def validate_url(url):
+    try:
+        response = requests.head(url)
+        return response.status_code == 200
+    except requests.exceptions.RequestException:
+        return False
+
 
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -77,6 +87,8 @@ def index():
     qr_code_image = None
     extracted_text = ""
     barcode_results = []
+    detected_urls = []
+    url_validations = []
     show_results = False
     
     if request.method == "POST":
@@ -114,17 +126,18 @@ def index():
             extracted = extract_text_from_image(poster_path)
             extracted_text = f"Extracted Text : {extracted}"
             
-            
-            return render_template('results.html', results={
-                "Average RGB": average_rgb_result,
-                "Indentation Evaluation": indentation_result,
-                "Image Clarity Score": clarity_result,
-                "Poster Size": size_dimension_result,
-                "Clutter Score": clutter_result,
-                "Extracted Text": extracted_text,
-            }, image_path=poster_path)
+             # Define a regular expression pattern to match URLs
+            url_pattern = r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+'
 
-            return f"{average_rgb_result}<br>{indentation_result}<br>{size_dimension_result}<br>{clarity_result}<br>{clutter_result}<br>{extracted_text}"
+            # Find all URLs in the extracted text
+            detected_urls = re.findall(url_pattern, extracted_text)
+
+            # Validate the detected URLs
+            url_validations = [validate_url(url) for url in detected_urls]
+            
+            
+
+            return f"{average_rgb_result}<br>{indentation_result}<br>{size_dimension_result}<br>{clarity_result}<br>{clutter_result}<br>{extracted_text}<br>{detected_urls}<br>{url_validations}"
         
 
     return render_template('index.html', 
@@ -135,6 +148,8 @@ def index():
                clutter_result=clutter_result,
                extracted_text=extracted_text,
                barcode_results=barcode_results,
+               detected_urls=detected_urls, 
+               url_validations=url_validations,
                show_results=True)
 
 if __name__ == '__main__':

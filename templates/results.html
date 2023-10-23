@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Your HTML head content -->
+</head>
+<body>
+    <h1>Scan Results</h1>
+    
+    <!-- Display average RGB, indentation, size, clarity, clutter, and extracted text -->
+    {{ average_rgb_result }}<br>
+    {{ indentation_result }}<br>
+    {{ size_dimension_result }}<br>
+    {{ clarity_result }}<br>
+    {{ clutter_result }}<br>
+    {{ extracted_text }}<br>
+    
+    <!-- Display valid links -->
+    <h2>Valid Links</h2>
+    <ul>
+        {% for link in valid_links %}
+            <li><a href="{{ link }}" target="_blank">{{ link }}</a></li>
+        {% endfor %}
+    </ul>
+
+    <!-- Display invalid links -->
+    <h2>Invalid Links</h2>
+    <ul>
+        {% for link in invalid_links %}
+            <li>{{ link }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
